@@ -1,0 +1,7 @@
+rule create_environment:
+    shell:
+        """
+        mamba env create -f environment.yml --prefix ./.venv
+        mamba run -p ./.venv pip install plip
+        mamba run -p ./.venv ANARCI --build_models
+        """

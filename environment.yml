@@ -1,0 +1,13 @@
+name: tcr-pmhc-structures
+channels:
+  - bioconda
+  - conda-forge
+dependencies:
+  - jupyter
+  - numpy
+  - pip
+  - pymol-open-source
+  - python=3.11
+  - snakemake
+  - pip:
+    - stcrpy

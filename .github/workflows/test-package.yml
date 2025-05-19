@@ -1,0 +1,16 @@
+name: Test package
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: mamba-org/setup-micromamba@v2
+      - name: Create Mamba Symlink
+        run: ln -s $(which micromamba) /usr/local/bin/mamba
+      - name: Setup environment
+        run: |
+            pip install pulp==2.7.0 snakemake
+            snakemake create_environment --quiet all --cores 1
