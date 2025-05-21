@@ -3,11 +3,14 @@ channels:
   - bioconda
   - conda-forge
 dependencies:
+  - biopython
   - jupyter
   - numpy
+  - pandas
   - pip
   - pymol-open-source
   - python=3.11
   - snakemake
   - pip:
     - stcrpy
+    - ruff

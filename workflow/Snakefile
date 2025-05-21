@@ -5,3 +5,13 @@ rule create_environment:
         mamba run -p ./.venv pip install plip
         mamba run -p ./.venv ANARCI --build_models
         """
+
+rule download_stcrdab_summary:
+    output: "data/raw/stcrdab_summary.tsv"
+    shell: "wget -O {output} https://opig.stats.ox.ac.uk/webapps/stcrdab-stcrpred/summary/all"
+
+
+rule select_and_process_structures:
+    input: "data/raw/stcrdab_summary.tsv"
+    output: directory("data/interim/structures")
+    notebook: "../notebooks/select_and_process_structures.ipynb"
