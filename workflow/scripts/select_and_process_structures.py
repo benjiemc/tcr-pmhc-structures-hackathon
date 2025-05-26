@@ -4,7 +4,7 @@ import pandas as pd
 from Bio.PDB.PDBExceptions import PDBConstructionException
 from Bio.SeqUtils import IUPACData
 from snakemake.script import snakemake
-from stcrpy import fetch_TCR
+from stcrpy import fetch_TCRs
 
 stcrdab_summary = pd.read_csv(snakemake.input[0], delimiter='\t')
 stcrdab_summary['resolution'] = pd.to_numeric(stcrdab_summary['resolution'], errors='coerce')
@@ -29,14 +29,11 @@ for pdb_id in selected_stcrdab['pdb'].unique():
     print('Loading', pdb_id)
 
     try:
-        tcrs = fetch_TCR(pdb_id)
+        tcrs = fetch_TCRs(pdb_id)
 
     except PDBConstructionException as err:
         print('Skipping', pdb_id, 'because of', err)
         continue
-
-    if not isinstance(tcrs, list):
-        tcrs = [tcrs]
 
     for tcr in tcrs:
         tcr_info = {
@@ -169,6 +166,8 @@ for pdb_id in selected_stcrdab['pdb'].unique():
             f"{tcr_info['antigen_chain_id']}"
             f"{tcr_info['mhc1_chain_id']}{tcr_info['mhc2_chain_id']}"
         )
+
+        tcr.standardise_chain_names()
 
         try:
             interactions = tcr.profile_peptide_interactions()
