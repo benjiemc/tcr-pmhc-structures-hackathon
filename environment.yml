@@ -12,5 +12,6 @@ dependencies:
   - python=3.11
   - snakemake
   - pip:
+    - snakemake-executor-plugin-slurm
     - stcrpy
     - ruff
