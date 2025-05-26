@@ -14,4 +14,8 @@ rule download_stcrdab_summary:
 rule select_and_process_structures:
     input: "data/raw/stcrdab_summary.tsv"
     output: directory("data/interim/structures")
-    notebook: "../notebooks/select_and_process_structures.ipynb"
+    resources:
+        runtime="20m",
+        mem="1GB",
+        tasks=1
+    script: "scripts/select_and_process_structures.py"
