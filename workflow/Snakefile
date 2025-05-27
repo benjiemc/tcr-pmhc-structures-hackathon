@@ -19,3 +19,16 @@ rule select_and_process_structures:
         mem="1GB",
         tasks=1
     script: "scripts/select_and_process_structures.py"
+
+rule run_structures_summary_notebook:
+    input: "data/interim/structures"
+    output: "data/flags/structures_summary_done.flag"
+    resources:
+        runtime="10m",
+        mem="1GB",
+        tasks=1
+    shell:
+        """
+        papermill notebooks/structures_summary.ipynb notebooks/structures_summary.ipynb
+        touch {output}
+        """

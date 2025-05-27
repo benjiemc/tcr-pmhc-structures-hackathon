@@ -5,11 +5,15 @@ channels:
 dependencies:
   - biopython
   - jupyter
+  - matplotlib
   - numpy
   - pandas
   - pip
+  - plotly
   - pymol-open-source
   - python=3.11
+  - scipy
+  - seaborn
   - snakemake
   - pip:
     - snakemake-executor-plugin-slurm

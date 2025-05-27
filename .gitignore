@@ -10,6 +10,8 @@ data/interim/*
 data/processed/*
 !data/processed/.gitkeep
 !data/processed/**/*.dvc
+data/flags/*
+!data/flags/.gitkeep
 
 # Python Files
 **/*.egg-info/*
