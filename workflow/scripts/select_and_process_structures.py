@@ -170,10 +170,13 @@ for pdb_id in selected_stcrdab["pdb"].unique():
 
         tcr_name = (
             f"{pdb_id}_"
-            f"{tcr_info['alpha_chain_id']}{tcr_info['beta_chain_id']}"
-            f"{tcr_info['antigen_chain_id']}"
-            f"{tcr_info['mhc1_chain_id']}{tcr_info['mhc2_chain_id']}"
+            f"{tcr_info['alpha_chain_id'] if tcr_info['alpha_chain_id'] else ''}"
+            f"{tcr_info['beta_chain_id'] if tcr_info['beta_chain_id'] else ''}"
+            f"{tcr_info['antigen_chain_id'] if tcr_info['antigen_chain_id'] else ''}"
+            f"{tcr_info['mhc1_chain_id'] if tcr_info['mhc1_chain_id'] else ''}"
+            f"{tcr_info['mhc2_chain_id'] if tcr_info['mhc2_chain_id'] else ''}"
         )
+        tcr_info['name'] = tcr_name
 
         tcr.standardise_chain_names()
 
@@ -192,8 +195,6 @@ for pdb_id in selected_stcrdab["pdb"].unique():
         selected_structures_summary.append(tcr_info)
 
 selected_structures_summary = pd.DataFrame(selected_structures_summary)
-selected_structures_summary
+selected_structures_summary = selected_structures_summary.set_index('name')
 
-selected_structures_summary.to_csv(
-    os.path.join(output_dir, "structures_summary.csv"), index=False
-)
+selected_structures_summary.to_csv(os.path.join(output_dir, "structures_summary.csv"))
