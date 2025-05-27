@@ -32,3 +32,35 @@ rule run_structures_summary_notebook:
         papermill notebooks/structures_summary.ipynb notebooks/structures_summary.ipynb
         touch {output}
         """
+
+rule package_data:
+    input:
+        readme="README_DATASET.md",
+        structures="data/interim/structures",
+        _flag="data/flags/structures_summary_done.flag"
+    output: "data/processed/structures.zip"
+    resources:
+        runtime="5m",
+        mem="1GB",
+        tasks=1
+    shell:
+        """
+        mkdir $TMPDIR/structures
+
+        # Readme
+        cp {input.readme} $TMPDIR/structures/README.md
+
+        # Structural data
+        cp {input.structures}/* $TMPDIR/structures/
+
+        # Export notebook
+        jupyter nbconvert --no-input --to html --output-dir $TMPDIR/structures/ notebooks/structures_summary.ipynb
+
+        # Zip everything together
+        current_dir=$(pwd)
+        cd $TMPDIR
+        zip -r $current_dir/{output} structures
+
+        # Cleanup temp files
+        rm -r structures
+        """
