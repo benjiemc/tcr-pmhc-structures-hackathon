@@ -9,7 +9,7 @@ The following files make up the structural dataset for the "Unravelling T Cell R
 
 ## PDB Structures
 
-Each structure follows this naming convention `<pdb-id>_<original-chains>.pdb`. Each file contains one TCR:pMHC complex isolated from its original PDB file. The chain names have been standardised to the following:
+Each structure follows this naming convention `<pdb-id>_<original-chains>.pdb`. Each file contains one TCR:pMHC complex isolated from its original PDB file and cropped to the TCR variable domain and pMHC antigen binding domain. The chain names have been standardised to the following:
 
 | Chain ID | Chain Type                                                     |
 | :------: | -------------------------------------------------------------- |

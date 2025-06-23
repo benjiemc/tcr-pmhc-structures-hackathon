@@ -1,7 +1,7 @@
 import os
 
 import pandas as pd
-from Bio.PDB.PDBExceptions import PDBConstructionException
+from Bio.PDB.PDBExceptions import PDBConstructionException, PDBException
 from Bio.SeqUtils import IUPACData
 from snakemake.script import snakemake
 from stcrpy import fetch_TCRs
@@ -161,7 +161,7 @@ for pdb_id in selected_stcrdab["pdb"].unique():
         try:
             docking_geometry = tcr.calculate_docking_geometry(mode="cys")
 
-        except (ValueError, ZeroDivisionError, KeyError) as err:
+        except (ValueError, ZeroDivisionError, KeyError, PDBException) as err:
             print("Skipping", pdb_id, "because of", err)
             continue
 
@@ -179,6 +179,7 @@ for pdb_id in selected_stcrdab["pdb"].unique():
         tcr_info['name'] = tcr_name
 
         tcr.standardise_chain_names()
+        tcr.crop()
 
         try:
             interactions = tcr.profile_peptide_interactions()
