@@ -33,10 +33,39 @@ rule run_structures_summary_notebook:
         touch {output}
         """
 
+rule create_apo_structures:
+    input: "data/interim/structures"
+    output: directory("data/interim/structures_apo")
+    resources:
+        runtime="5m",
+        mem="1GB",
+        tasks=1
+    shell:
+        """
+        mkdir -p {output}
+
+        for path in {input}/*.pdb; do
+            name=$(basename $path .pdb)
+            awk 'substr($0, 22, 1) == "E" || substr($0, 22, 1) == "D"' $path > "{output}/${{name}}_tcr.pdb"
+            awk 'substr($0, 22, 1) == "A" || substr($0, 22, 1) == "B" || substr($0, 22, 1) == "C"' $path > "{output}/${{name}}_pmhc.pdb"
+        done
+
+        ref_tcr=$(ls {output}/*_tcr.pdb | sort | head -n1)
+        for path in {output}/*_tcr.pdb; do
+            pymol -c -d "load {output}/${{ref_tcr}}, ref; load ${{path}}, mov; align mov, ref; save ${{path}}, mov; quit"
+        done
+
+        ref_pmhc=$(ls {output}/*_pmhc.pdb | sort | tail -n1)
+        for path in {output}/*_pmhc.pdb; do
+            pymol -c -d "load {output}/${{ref_pmhc}}, ref; load ${{path}}, mov; align mov, ref; save ${{path}}, mov; quit"
+        done
+        """
+
 rule package_data:
     input:
         readme="README_DATASET.md",
         structures="data/interim/structures",
+        apo_structures="data/interim/structures_apo",
         _flag="data/flags/structures_summary_done.flag"
     output: "data/processed/structures.zip"
     resources:
@@ -52,6 +81,7 @@ rule package_data:
 
         # Structural data
         cp {input.structures}/* $TMPDIR/structures/
+        cp -r {input.apo_structures} $TMPDIR/structures/
 
         # Export notebook
         jupyter nbconvert --no-input --to html --output-dir $TMPDIR/structures/ notebooks/structures_summary.ipynb
