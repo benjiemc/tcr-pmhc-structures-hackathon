@@ -31,6 +31,6 @@ Using this data, we have set out the following questions to be answered by hacka
 
 1. Using structural information, can we discriminate between TCRs that bind to pMHC class Is versus pMHC class IIs?
 
-2. Can we predict which residues will interact between the TCR and peptide? `Note:` careful processing of the data is required here so that absolute positions are not given to the method and it can simply calculate things that are less than 5 Å apart.
+2. Given a TCR binds to a pMHC, can we predict which residues will interact between the TCR and peptide using only the unbound (*apo*) TCR and pMHC structures?
 
 3. Design a new method for clustering TCRs based on structural information.
