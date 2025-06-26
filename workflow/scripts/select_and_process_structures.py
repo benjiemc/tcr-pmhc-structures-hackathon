@@ -167,6 +167,7 @@ for pdb_id in selected_stcrdab["pdb"].unique():
 
         tcr_info["pitch_angle"] = docking_geometry["pitch_angle"]
         tcr_info["scanning_angle"] = docking_geometry["scanning_angle"]
+        tcr_info["z_distance"] = docking_geometry["tcr_com"][0][2]
 
         tcr_name = (
             f"{pdb_id}_"
