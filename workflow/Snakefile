@@ -20,8 +20,33 @@ rule select_and_process_structures:
         tasks=1
     script: "scripts/select_and_process_structures.py"
 
-rule run_structures_summary_notebook:
+rule aggregate_interactions:
     input: "data/interim/structures"
+    output: "data/interim/interactions.csv"
+    resources:
+        runtime="1m",
+        mem="100MB"
+    run:
+        import glob
+        import os
+        import re
+
+        import pandas as pd
+
+        interactions = []
+        for path in glob.glob(os.path.join(input[0], '*_interactions.csv')):
+            interaction_df = pd.read_csv(path)
+            interaction_df['complex_name'] = re.search(r'([0-9a-z]{4}_[a-zA-Z]{4,5})_interactions.csv', os.path.basename(path)).group(1)
+
+            interactions.append(interaction_df)
+
+        interactions = pd.concat(interactions)
+        columns = ['complex_name', *(column_name for column_name in interactions.columns if column_name != 'complex_name')]
+        interactions = interactions[columns]
+        interactions.to_csv(output[0], index=False)
+
+rule run_structures_summary_notebook:
+    input: "data/interim/structures", "data/interim/interactions.csv"
     output: "data/flags/structures_summary_done.flag"
     resources:
         runtime="10m",
@@ -65,6 +90,7 @@ rule package_data:
     input:
         readme="README_DATASET.md",
         structures="data/interim/structures",
+        interactions="data/interim/interactions.csv",
         apo_structures="data/interim/structures_apo",
         _flag="data/flags/structures_summary_done.flag"
     output: "data/processed/structures.zip"
@@ -80,7 +106,9 @@ rule package_data:
         cp {input.readme} $TMPDIR/structures/README.md
 
         # Structural data
-        cp {input.structures}/* $TMPDIR/structures/
+        cp {input.structures}/*.pdb $TMPDIR/structures/
+        cp {input.structures}/structures_summary.csv $TMPDIR/structures/
+        cp {input.interactions} $TMPDIR/structures/
         cp -r {input.apo_structures} $TMPDIR/structures/
 
         # Export notebook
