@@ -8,6 +8,7 @@ dependencies:
   - matplotlib
   - numpy
   - pandas
+  - papermill
   - pip
   - plotly
   - pymol-open-source
